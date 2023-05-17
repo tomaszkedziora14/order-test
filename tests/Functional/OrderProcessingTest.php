@@ -44,4 +44,14 @@ class OrderProcessingTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertContains('Invalid input', $client->getResponse()->getContent());
     }
+    
+     public function testProcessOrdersWithoutAuthorization()
+    {
+        $client = static::createClient();
+        $client->disableReboot();
+        
+        $crawler = $client->request('GET', '/orders');
+        
+        $this->assertEquals(401, $client->getResponse()->getStatusCode());
+    }
 }
