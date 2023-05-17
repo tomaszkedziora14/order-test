@@ -27,4 +27,21 @@ class OrderProcessingTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertContains('Orders processed successfully', $crawler->filter('h1')->text());
     }
+    
+    public function testProcessOrdersWithInvalidInput()
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/orders');
+        
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        
+        $form = $crawler->selectButton('Process')->form();
+        $form['channel1_orders'] = '-5'; 
+        $form['channel2_orders'] = 'abc'; 
+        
+        $client->submit($form);
+        
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertContains('Invalid input', $client->getResponse()->getContent());
+    }
 }
